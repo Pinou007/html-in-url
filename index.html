@@ -3,48 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Meta tags pour le SEO -->
     <title>HTML in UTL Pinou007</title>
-    <meta name="description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls. Toute responsabilité quant aux événements survenant lors de son utilisation ne repose pas sur moi. Profite pleinement de cette opportunité tout en restant vigilant et prudent.">
+    <meta name="description" content="Utilise ce site comme ton espace en ligne. Navigation simple et intuitive. À tes risques et périls.">
     <meta name="robots" content="index, follow">
-
-    <!-- Open Graph pour Facebook et Discord -->
     <meta property="og:title" content="HTML in UTL Pinou007">
-    <meta property="og:description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls.">
+    <meta property="og:description" content="Utilise ce site comme ton espace en ligne. À tes risques et périls.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://html.pinou007.fr">
     <meta property="og:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
-
-    <!-- Twitter Card pour Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="HTML in UTL Pinou007">
-    <meta name="twitter:description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls.">
+    <meta name="twitter:description" content="Utilise ce site comme ton espace en ligne. À tes risques et périls.">
     <meta name="twitter:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
-
-    <!-- Lien vers les polices et la feuille de style -->
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Contenu de votre page -->
     <div class="navbar">
         <h1>HTML Pages - Pinou007</h1>
-        <div class="navbar-menu">
-            <!-- Menu de navigation si nécessaire -->
-        </div>
+        <div class="navbar-menu"></div>
         <button id="toggleEditorBtn" onclick="toggleEditor()">Éditer du Code</button>
     </div>
-
-    <!-- Conteneur de l'éditeur de code -->
     <div id="editorContainer" class="editor-container">
         <textarea id="codeInput" placeholder="Entrez votre code HTML, CSS, ou JavaScript ici..."></textarea>
         <button class="execute-btn" onclick="executeCode()">Exécuter le Code</button>
     </div>
-
-    <!-- Conteneur pour afficher le code exécuté -->
     <div id="content"></div>
-
     <script src="script.js"></script>
 </body>
 </html>
