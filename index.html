@@ -3,195 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Pages - Pinou007</title>
+
+    <!-- Meta tags pour le SEO -->
+    <title>HTML in UTL Pinou007</title>
+    <meta name="description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls. Toute responsabilité quant aux événements survenant lors de son utilisation ne repose pas sur moi. Profite pleinement de cette opportunité tout en restant vigilant et prudent.">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph pour Facebook et Discord -->
+    <meta property="og:title" content="HTML in UTL Pinou007">
+    <meta property="og:description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://html.pinou007.fr">
+    <meta property="og:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
+
+    <!-- Twitter Card pour Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="HTML in UTL Pinou007">
+    <meta name="twitter:description" content="Utilise ce site web comme si c'était ton propre espace en ligne. Tout ce dont tu as besoin est stocké directement dans l'URL, rendant la navigation et l'utilisation incroyablement simples et intuitives. N'oublie pas, cependant, que l'utilisation de cette plateforme est à tes risques et périls.">
+    <meta name="twitter:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
+
+    <!-- Lien vers les polices et la feuille de style -->
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-    <style>
-        /* Style général */
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Barre de navigation */
-        .navbar {
-            background-color: #1e1e1e;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .navbar h1 {
-            font-family: 'Archivo Black', sans-serif;
-            font-size: 1.5rem;
-            background: linear-gradient(45deg, #ff4b1f, #ff9068, #00c6ff, #0072ff, #7b42f6, #ff00ff, #ffff00);
-            background-size: 300% 300%;
-            animation: gradientAnimation 1.5s infinite alternate;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-
-        /* Animation de dégradé pour le titre */
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-
-        /* Liens de la barre de navigation */
-        .navbar-menu {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .navbar-menu a {
-            color: #e0e0e0;
-            text-decoration: none;
-            font-size: 1rem;
-            padding: 0.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-menu a:hover {
-            color: #00c6ff;
-        }
-
-        /* Bouton d'édition */
-        #toggleEditorBtn {
-            padding: 0.5rem 1rem;
-            background-color: #555;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        #toggleEditorBtn:hover {
-            background-color: #333;
-            transform: scale(1.05);
-        }
-
-        /* Conteneur de l'éditeur de code */
-        .editor-container {
-            display: none;
-            background-color: #1e1e1e;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 700px;
-            margin: 2rem auto;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .editor-container.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        textarea {
-            width: 100%;
-            height: 200px;
-            background-color: #333;
-            color: #e0e0e0;
-            font-size: 1rem;
-            font-family: monospace;
-            border: none;
-            padding: 0.5rem;
-            border-radius: 4px;
-            resize: vertical;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        /* Style du code affiché */
-        #content {
-            flex: 1;
-            padding: 1rem;
-            border-radius: 8px;
-            background-color: #2b2b2b;
-            color: #e0e0e0;
-            transition: background-color 0.3s ease;
-            overflow-x: auto; /* Pour faire défiler le contenu si nécessaire */
-        }
-
-        .tag { color: #ff79c6; } /* Couleur des balises */
-        .attr { color: #50fa7b; } /* Couleur des attributs */
-        .value { color: #bd93f9; } /* Couleur des valeurs d'attributs */
-        .comment { color: #6272a4; font-style: italic; } /* Couleur des commentaires */
-
-        /* Style du bouton Exécuter le Code */
-        .execute-btn {
-            padding: 0.6rem 1.2rem;
-            background-color: #ff9068;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(255, 144, 104, 0.3);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            margin-top: 0.5rem;
-        }
-
-        .execute-btn:hover {
-            background-color: #ff4b1f;
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(255, 75, 31, 0.4);
-        }
-
-        /* Responsivité */
-        @media (max-width: 600px) {
-            .navbar h1 {
-                font-size: 1.2rem;
-            }
-
-            .navbar-menu {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .editor-container {
-                width: 90%;
-                padding: 1rem;
-            }
-
-            textarea {
-                height: 150px;
-                font-size: 0.9rem;
-            }
-
-            .execute-btn {
-                font-size: 0.9rem;
-                padding: 0.5rem 1rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- Barre de navigation -->
+    <!-- Contenu de votre page -->
     <div class="navbar">
         <h1>HTML Pages - Pinou007</h1>
         <div class="navbar-menu">
-            <a href="#information">Information</a>
-            <a href="#terms">Condition d'utilisation</a>
-            <a href="#danger">Danger</a>
+            <!-- Menu de navigation si nécessaire -->
         </div>
         <button id="toggleEditorBtn" onclick="toggleEditor()">Éditer du Code</button>
     </div>
@@ -205,79 +45,6 @@
     <!-- Conteneur pour afficher le code exécuté -->
     <div id="content"></div>
 
-    <script>
-        // Fonction pour basculer l'affichage de l'éditeur
-        function toggleEditor() {
-            const editorContainer = document.getElementById("editorContainer");
-            editorContainer.classList.toggle("active");
-            document.getElementById("codeInput").value = getHtmlFromUrl() || '';
-        }
-
-        // Fonction pour obtenir le code depuis l'URL
-        function getHtmlFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get("code") ? decodeURIComponent(params.get("code")) : "";
-        }
-
-        // Fonction pour injecter le code saisi dans la zone de contenu
-        function executeCode() {
-            const codeInput = document.getElementById("codeInput").value;
-            const content = document.getElementById("content");
-
-            // Mise à jour de l'URL avec le code encodé
-            window.history.replaceState(null, null, `?code=${encodeURIComponent(codeInput)}`);
-
-            // Injection et exécution du code sécurisé
-            content.innerHTML = highlightSyntax(codeInput);
-
-            // Vérifie et empêche les redirections dans le code
-            if (/window.location|document.location/.test(codeInput)) {
-                alert("Redirections et modifications de location sont désactivées.");
-                return;
-            }
-
-            // Exécuter les scripts sans redirection
-            const scripts = content.getElementsByTagName("script");
-            for (let script of scripts) {
-                try {
-                    eval(script.innerHTML);
-                } catch (error) {
-                    console.error("Erreur de script:", error);
-                }
-            }
-        }
-
-        // Fonction pour surligner la syntaxe du code
-        function highlightSyntax(code) {
-            return code
-                .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="comment">$1</span>') // Commentaires
-                .replace(/(&lt;\/?[a-z][a-z0-9]*)(.*?)(&gt;)/gi, (match, p1, p2, p3) => {
-                    return `<span class="tag">${p1}</span><span class="attr">${p2}</span>${p3}`;
-                }) // Balises et attributs
-                .replace(/(&gt;)/g, '&gt;');
-        }
-
-        // Charger et exécuter le code de l'URL si présent
-        function loadCodeFromUrl() {
-            const codeFromUrl = getHtmlFromUrl();
-            if (codeFromUrl) {
-                document.getElementById("editorContainer").classList.remove("active");
-                document.getElementById("content").innerHTML = highlightSyntax(codeFromUrl);
-                const scripts = document.getElementById("content").getElementsByTagName("script");
-                for (let script of scripts) {
-                    try {
-                        eval(script.innerHTML);
-                    } catch (error) {
-                        console.error("Erreur de script:", error);
-                    }
-                }
-            } else {
-                toggleEditor();  // Affiche l'éditeur si aucun code n'est présent
-            }
-        }
-
-        // Charger le code à partir de l'URL lors du chargement de la page
-        window.onload = loadCodeFromUrl;
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
