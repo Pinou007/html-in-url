@@ -1,175 +1,652 @@
-/* Style général */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #121212;
-    color: #e0e0e0;
-    font-family: Arial, sans-serif;
-    display: flex;
+/* =========================================================
+   HTML IN URL - STYLESHEET FLAT DESIGN
+   Police: Nunito | Couleur d'accent: #9000d5
+   Thème: 100% Automatique (Sombre / Clair)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  /* Accent Flat #9000d5 */
+  --accent: #9000d5;
+  --accent-hover: #7b00b7;
+  --accent-subtle: rgba(144, 0, 213, 0.08);
+
+  /* Mode Clair (Par défaut) */
+  --bg-app: #f4f5f8;
+  --bg-surface: #ffffff;
+  --bg-muted: #eceef3;
+  --text-main: #181a20;
+  --text-muted: #646a7c;
+  --text-dim: #9aa0b2;
+  --border: #dcdfe8;
+  --border-focus: var(--accent);
+
+  /* Éditeur */
+  --editor-bg: #ffffff;
+  --editor-gutter: #f4f5f8;
+  --editor-gutter-text: #8e95ab;
+  --editor-text: #181a20;
+
+  --radius: 6px;
+}
+
+/* Mode Sombre Automatique */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-app: #0f1117;
+    --bg-surface: #161922;
+    --bg-muted: #1e2230;
+    --text-main: #f3f4f8;
+    --text-muted: #9ba1b4;
+    --text-dim: #5c647b;
+    --border: #272d3e;
+
+    --editor-bg: #13161f;
+    --editor-gutter: #0f1117;
+    --editor-gutter-text: #505973;
+    --editor-text: #eef1fc;
+    --accent-subtle: rgba(144, 0, 213, 0.18);
+  }
+}
+
+/* === BASE RESET === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* === TOP BAR (FLAT, SANS GLOW, SANS ROND) === */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 50;
+  flex-wrap: nowrap;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.brand-logo:hover {
+  color: var(--accent);
+}
+
+.btn-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+/* === BARRE URL SANS FOND ÉPAIS AVEC PICTOS === */
+.url-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  max-width: 680px;
+  min-width: 0;
+  background: transparent;
+}
+
+.url-input-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  padding: 0.25rem 0.6rem;
+  gap: 0.5rem;
+}
+
+.url-input-wrap:focus-within {
+  border-color: var(--accent);
+}
+
+.url-text {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: all;
+}
+
+.char-count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-family: 'Fira Code', monospace;
+}
+
+.char-count.warning {
+  color: #f59e0b;
+}
+
+.char-count.danger {
+  color: #ef4444;
+}
+
+/* Boutons Pictos Flat */
+.url-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.btn-picto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.btn-picto:hover:not(:disabled) {
+  background: var(--bg-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-picto:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+.btn-flat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-flat:hover {
+  background: var(--bg-muted);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-flat.primary {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.btn-flat.primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-flat-sm {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.btn-flat-sm:hover {
+  background: var(--bg-muted);
+  color: var(--text-main);
+}
+
+/* === WORKSPACE SPLIT (FLAT) === */
+.workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Bascule des vues (Plein Écran Aperçu ou Plein Écran Éditeur sur PC et Mobile) */
+.workspace.view-preview .editor-pane,
+.workspace.view-preview .resizer {
+  display: none !important;
+}
+
+.workspace.view-preview .preview-pane {
+  width: 100% !important;
+  flex: 1 !important;
+}
+
+.workspace.view-editor .preview-pane,
+.workspace.view-editor .resizer {
+  display: none !important;
+}
+
+.workspace.view-editor .editor-pane {
+  width: 100% !important;
+  flex: 1 !important;
+  border-right: none !important;
+}
+
+/* Colonne Éditeur */
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  min-width: 260px;
+  background: var(--editor-bg);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.editor-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-muted);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.console-tab-badge {
+  font-size: 0.7rem;
+  font-family: 'Fira Code', monospace;
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+}
+
+.tab-btn.active .console-tab-badge {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* Zone de code */
+.editor-body {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.code-wrapper {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex: 1;
+}
+
+.code-wrapper.active {
+  display: flex;
+}
+
+.line-numbers {
+  width: 42px;
+  padding: 0.75rem 0.3rem;
+  background: var(--editor-gutter);
+  border-right: 1px solid var(--border);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--editor-gutter-text);
+  text-align: right;
+  user-select: none;
+  overflow: hidden;
+  white-space: pre-line;
+}
+
+.code-textarea {
+  flex: 1;
+  padding: 0.75rem;
+  background: var(--editor-bg);
+  color: var(--editor-text);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  border: none;
+  outline: none;
+  resize: none;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 2;
+}
+
+/* Onglet Console intégré côté éditeur */
+.console-wrapper {
+  flex-direction: column;
+  background: var(--editor-bg);
+}
+
+.console-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.console-logs-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+}
+
+.console-empty-msg {
+  color: var(--text-dim);
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+}
+
+.console-entry {
+  padding: 0.25rem 0.4rem;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+  display: flex;
+  gap: 0.5rem;
+  word-break: break-all;
+}
+
+.console-entry.log { color: var(--text-main); }
+.console-entry.warn { color: #f59e0b; }
+.console-entry.error { color: #ef4444; }
+
+.console-entry-time {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+/* Séparateur resizer */
+.resizer {
+  width: 5px;
+  background: var(--border);
+  cursor: col-resize;
+  z-index: 10;
+}
+
+.resizer:hover, .resizer.dragging {
+  background: var(--accent);
+}
+
+/* Colonne Aperçu */
+.preview-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 260px;
+  background: var(--bg-surface);
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.iframe-container {
+  flex: 1;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .iframe-container {
+    background: #11141c;
+  }
+}
+
+#preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* === MODALE QR CODE FLAT === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.modal-content {
+  padding: 1.25rem;
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qr-box {
+  background: #ffffff;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-box canvas, .qr-box img {
+  display: block;
+  max-width: 100%;
+}
+
+.qr-desc {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-muted);
+  border-top: 1px solid var(--border);
+}
+
+/* Toast Flat */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--accent);
+  color: var(--text-main);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 0.82rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 2000;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* === RESPONSIVE MOBILE (GUI ADAPTÉ) === */
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 0.4rem 0.6rem;
+    gap: 0.4rem;
+  }
+
+  .url-bar-container {
+    max-width: 100%;
+  }
+
+  .url-input-wrap {
+    padding: 0.2rem 0.4rem;
+  }
+
+  .workspace {
     flex-direction: column;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
+  }
 
-/* Barre de navigation */
-.navbar {
-    background-color: #1e1e1e;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.navbar h1 {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 1.5rem;
-    background: linear-gradient(45deg, #ff4b1f, #ff9068, #00c6ff, #0072ff, #7b42f6, #ff00ff, #ffff00);
-    background-size: 300% 300%;
-    animation: gradientAnimation 1.5s infinite alternate;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin: 0;
-}
-
-/* Animation de dégradé pour le titre */
-@keyframes gradientAnimation {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
-}
-
-/* Liens de la barre de navigation */
-.navbar-menu {
-    display: flex;
-    gap: 1rem;
-}
-
-.navbar-menu a {
-    color: #e0e0e0;
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 0.5rem;
-    transition: color 0.3s ease;
-}
-
-.navbar-menu a:hover {
-    color: #00c6ff;
-}
-
-/* Bouton d'édition */
-#toggleEditorBtn {
-    padding: 0.5rem 1rem;
-    background-color: #555;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#toggleEditorBtn:hover {
-    background-color: #333;
-    transform: scale(1.05);
-}
-
-/* Conteneur de l'éditeur de code */
-.editor-container {
+  .resizer {
     display: none;
-    background-color: #1e1e1e;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    width: 80%;
-    max-width: 700px;
-    margin: 2rem auto;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
+  }
 
-.editor-container.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
+  .editor-pane {
+    width: 100% !important;
+    height: 100%;
+    border-right: none;
+  }
 
-textarea {
-    width: 100%;
-    height: 200px;
-    background-color: #333;
-    color: #e0e0e0;
-    font-size: 1rem;
-    font-family: monospace;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 4px;
-    resize: vertical;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-/* Style du code affiché */
-#content {
-    flex: 1;
-    padding: 1rem;
-    border-radius: 8px;
-    background-color: #2b2b2b;
-    color: #e0e0e0;
-    transition: background-color 0.3s ease;
-    overflow-x: auto;
-}
-
-.tag { color: #ff79c6; }
-.attr { color: #50fa7b; }
-.value { color: #bd93f9; }
-.comment { color: #6272a4; font-style: italic; }
-
-/* Style du bouton Exécuter le Code */
-.execute-btn {
-    padding: 0.6rem 1.2rem;
-    background-color: #ff9068;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: bold;
-    box-shadow: 0 4px 6px rgba(255, 144, 104, 0.3);
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    margin-top: 0.5rem;
-}
-
-.execute-btn:hover {
-    background-color: #ff4b1f;
-    transform: scale(1.05);
-    box-shadow: 0 6px 10px rgba(255, 75, 31, 0.4);
-}
-
-/* Responsivité */
-@media (max-width: 600px) {
-    .navbar h1 {
-        font-size: 1.2rem;
-    }
-
-    .navbar-menu {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .editor-container {
-        width: 90%;
-        padding: 1rem;
-    }
-
-    textarea {
-        height: 150px;
-        font-size: 0.9rem;
-    }
-
-    .execute-btn {
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-    }
+  .preview-pane {
+    width: 100% !important;
+    height: 100%;
+  }
 }

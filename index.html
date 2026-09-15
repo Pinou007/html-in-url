@@ -1,34 +1,171 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML in UTL Pinou007</title>
-    <meta name="description" content="Utilise ce site comme ton espace en ligne. Navigation simple et intuitive. À tes risques et périls.">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="HTML in UTL Pinou007">
-    <meta property="og:description" content="Utilise ce site comme ton espace en ligne. À tes risques et périls.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://html.pinou007.fr">
-    <meta property="og:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="HTML in UTL Pinou007">
-    <meta name="twitter:description" content="Utilise ce site comme ton espace en ligne. À tes risques et périls.">
-    <meta name="twitter:image" content="https://storage1.pinou007.fr/img/html-in-url-banner.png">
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML in URL</title>
+  <meta name="description" content="Éditeur HTML, CSS et JavaScript où le code est conservé et compressé directement dans l'URL.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  
+  <!-- Police Google Nunito & Fira Code pour le code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="navbar">
-        <h1>HTML Pages - Pinou007</h1>
-        <div class="navbar-menu"></div>
-        <button id="toggleEditorBtn" onclick="toggleEditor()">Éditer du Code</button>
+  <div id="app">
+    <!-- BARRE SUPÉRIEURE SIMPLE & FLAT -->
+    <header class="top-bar">
+      <!-- Marque & Bascule Mobile -->
+      <div class="brand-section">
+        <a href="#" class="brand-logo" id="brand-logo">
+          <span>HTML in URL</span>
+        </a>
+        <button class="btn-flat btn-view-toggle" id="btn-toggle-editor" title="Basculer Éditeur / Aperçu">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+          </svg>
+          <span id="btn-toggle-label">Aperçu</span>
+        </button>
+      </div>
+
+      <!-- BARRE URL ÉPURÉE SANS FOND ÉPAIS AVEC LES 3 BOUTONS PICTOS -->
+      <div class="url-bar-container">
+        <div class="url-input-wrap">
+          <input type="text" readonly class="url-text" id="url-display-input" value="Chargement de l'URL...">
+          <span class="char-count" id="char-counter">0 / 2048 car.</span>
+        </div>
+
+        <div class="url-actions">
+          <!-- Picto Copier -->
+          <button class="btn-picto" id="btn-copy-url" title="Copier l'URL">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+
+          <!-- Picto QR Code (Uniquement si < 1024 caractères) -->
+          <button class="btn-picto" id="btn-open-qr" title="Générer un QR Code (< 1024 caractères)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </button>
+
+          <!-- Picto Télécharger dans un seul fichier HTML -->
+          <button class="btn-picto" id="btn-download-html" title="Télécharger dans un fichier HTML unique">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ESPACE DE TRAVAIL : ÉDITEUR (À GAUCHE/HAUT) & IFRAME (À DROITE/BAS) -->
+    <main class="workspace" id="workspace">
+      <!-- ZONE ÉDITEUR DE CODE AVEC ONGLETS (HTML, CSS, JS, CONSOLE) -->
+      <section class="editor-pane" id="editor-pane">
+        <div class="editor-header">
+          <div class="editor-tabs">
+            <button class="tab-btn active" data-tab="html" id="tab-html">HTML</button>
+            <button class="tab-btn" data-tab="css" id="tab-css">CSS</button>
+            <button class="tab-btn" data-tab="js" id="tab-js">JS</button>
+            <button class="tab-btn" data-tab="console" id="tab-console">
+              <span>Console</span>
+              <span class="console-tab-badge" id="console-count">0</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="editor-body">
+          <!-- Onglet HTML -->
+          <div class="code-wrapper active" id="wrapper-html">
+            <div class="line-numbers" id="lines-html">1</div>
+            <textarea class="code-textarea" id="textarea-html" spellcheck="false" placeholder="<!-- Code HTML -->"></textarea>
+          </div>
+
+          <!-- Onglet CSS -->
+          <div class="code-wrapper" id="wrapper-css">
+            <div class="line-numbers" id="lines-css">1</div>
+            <textarea class="code-textarea" id="textarea-css" spellcheck="false" placeholder="/* Code CSS */"></textarea>
+          </div>
+
+          <!-- Onglet JS -->
+          <div class="code-wrapper" id="wrapper-js">
+            <div class="line-numbers" id="lines-js">1</div>
+            <textarea class="code-textarea" id="textarea-js" spellcheck="false" placeholder="// Code JavaScript"></textarea>
+          </div>
+
+          <!-- Onglet Console (Intégré côté éditeur) -->
+          <div class="code-wrapper console-wrapper" id="wrapper-console">
+            <div class="console-toolbar">
+              <span>Sortie de la Console</span>
+              <button class="btn-flat-sm" id="btn-clear-console">Vider</button>
+            </div>
+            <div class="console-logs-list" id="console-logs-list">
+              <div class="console-empty-msg">Aucun message pour le moment.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BARRE DE REDIMENSIONNEMENT -->
+      <div class="resizer" id="resizer"></div>
+
+      <!-- ZONE IFRAME D'EXÉCUTION -->
+      <section class="preview-pane" id="preview-pane">
+        <div class="preview-header">
+          <span class="preview-label">Aperçu</span>
+        </div>
+        <div class="iframe-container">
+          <!-- Sandbox stricte sans allow-same-origin ni allow-top-navigation -->
+          <iframe id="preview-frame" sandbox="allow-scripts" title="Aperçu"></iframe>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODALE QR CODE (ACTIF QUAND < 1024 CARACTÈRES) -->
+  <div class="modal-overlay" id="modal-qr" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">QR Code</h3>
+        <button class="btn-picto" id="btn-close-qr" data-close="modal-qr" title="Fermer (Échap)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="qr-container">
+          <div class="qr-box" id="qr-target"></div>
+          <p class="qr-desc">Scannez pour ouvrir directement sur mobile.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-flat" id="btn-copy-qr-link">Copier le lien</button>
+        <button class="btn-flat primary" id="btn-download-qr-img">Télécharger l'image</button>
+      </div>
     </div>
-    <div id="editorContainer" class="editor-container">
-        <textarea id="codeInput" placeholder="Entrez votre code HTML, CSS, ou JavaScript ici..."></textarea>
-        <button class="execute-btn" onclick="executeCode()">Exécuter le Code</button>
-    </div>
-    <div id="content"></div>
-    <script src="script.js"></script>
+  </div>
+
+  <!-- TOAST SIMPLE & PLAT -->
+  <div class="toast" id="toast">
+    <span id="toast-text">Lien copié !</span>
+  </div>
+
+  <!-- SCRIPTS (Entièrement exécutés côté client) -->
+  <script src="js/qrcode.min.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
