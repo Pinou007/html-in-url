@@ -289,7 +289,7 @@ async function syncUrl() {
     DOM.btnCopyUrl.disabled = true;
     DOM.btnOpenScreen.disabled = true;
     DOM.btnOpenQr.disabled = true;
-    showToast(`⚠️ Limite dépassée (${urlLen} / ${MAX_CHARS} car.) ! Non enregistré dans l'URL.`);
+    showToast(`Limite dépassée (${urlLen} / ${MAX_CHARS} car.) — Non enregistré dans l'URL.`);
     // Ne pas remplacer l'URL dans l'historique quand la limite est dépassée
     return;
   }
@@ -446,11 +446,16 @@ async function loadFromUrl() {
 }
 
 // Événements Onglet Autorisations (Standard & Personnalisées)
+// Pour open-links et allow-iframes : le domaine est OBLIGATOIRE
 function updateCustomPermission(prefix, isChecked, domainsVal) {
   state.permissions = state.permissions.filter(p => !p.startsWith(prefix));
   if (isChecked) {
     const trimmed = (domainsVal || '').trim();
-    state.permissions.push(trimmed ? `${prefix}:${trimmed}` : prefix);
+    if (!trimmed) {
+      // Domaine obligatoire : on coche pas si vide
+      return;
+    }
+    state.permissions.push(`${prefix}:${trimmed}`);
   }
   syncPermissionsUI();
   triggerAutoSync();
@@ -458,6 +463,21 @@ function updateCustomPermission(prefix, isChecked, domainsVal) {
 
 if (DOM.cbOpenLinks) {
   DOM.cbOpenLinks.addEventListener('change', () => {
+    if (DOM.cbOpenLinks.checked) {
+      const domains = DOM.inputOpenLinksDomains ? DOM.inputOpenLinksDomains.value.trim() : '';
+      if (!domains) {
+        // Forcer le retour décoché + afficher message
+        DOM.cbOpenLinks.checked = false;
+        showToast('Renseignez au moins un domaine autorisé avant d\'activer cette permission.');
+        if (DOM.rowDomainOpenLinks) DOM.rowDomainOpenLinks.style.display = 'flex';
+        if (DOM.inputOpenLinksDomains) DOM.inputOpenLinksDomains.focus();
+        return;
+      }
+    }
+    // Afficher/masquer la rangée domaine
+    if (DOM.rowDomainOpenLinks) {
+      DOM.rowDomainOpenLinks.style.display = DOM.cbOpenLinks.checked ? 'flex' : 'none';
+    }
     updateCustomPermission('open-links', DOM.cbOpenLinks.checked, DOM.inputOpenLinksDomains ? DOM.inputOpenLinksDomains.value : '');
   });
 }
@@ -472,6 +492,20 @@ if (DOM.inputOpenLinksDomains) {
 
 if (DOM.cbAllowIframes) {
   DOM.cbAllowIframes.addEventListener('change', () => {
+    if (DOM.cbAllowIframes.checked) {
+      const domains = DOM.inputAllowIframesDomains ? DOM.inputAllowIframesDomains.value.trim() : '';
+      if (!domains) {
+        DOM.cbAllowIframes.checked = false;
+        showToast('Renseignez au moins un domaine autorisé avant d\'activer cette permission.');
+        if (DOM.rowDomainAllowIframes) DOM.rowDomainAllowIframes.style.display = 'flex';
+        if (DOM.inputAllowIframesDomains) DOM.inputAllowIframesDomains.focus();
+        return;
+      }
+    }
+    // Afficher/masquer la rangée domaine
+    if (DOM.rowDomainAllowIframes) {
+      DOM.rowDomainAllowIframes.style.display = DOM.cbAllowIframes.checked ? 'flex' : 'none';
+    }
     updateCustomPermission('allow-iframes', DOM.cbAllowIframes.checked, DOM.inputAllowIframesDomains ? DOM.inputAllowIframesDomains.value : '');
   });
 }

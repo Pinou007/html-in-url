@@ -63,18 +63,6 @@ export const PERMISSION_ITEMS = {
     desc: 'Orientation, boussole et accéléromètre',
     svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`
   },
-  bluetooth: {
-    id: 'bluetooth',
-    label: 'Bluetooth',
-    desc: 'Connexion aux appareils sans fil Bluetooth',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"></polyline></svg>`
-  },
-  midi: {
-    id: 'midi',
-    label: 'Instruments MIDI',
-    desc: 'Accès aux instruments et synthétiseurs',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`
-  },
   fullscreen: {
     id: 'fullscreen',
     label: 'Mode Plein Écran',
@@ -470,7 +458,7 @@ export function buildSandboxDocument({
                 console.warn('[Permissions] Erreur :', e);
               }
 
-              btn.textContent = '✓ Accordé';
+              btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="vertical-align:middle;margin-right:4px"><polyline points="20 6 9 17 4 12"></polyline></svg>Accordé';
               btn.classList.add('granted');
               grantedState[p] = true;
               checkAllGranted();
