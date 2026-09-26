@@ -4,7 +4,7 @@
  */
 
 import { encodePayload, decodePayload, calculateUrlStats } from './compress.js';
-import { renderToIframe, buildStandaloneExport } from './sandbox.js';
+import { renderToIframe, buildStandaloneExport, PERMISSION_ITEMS } from './sandbox.js';
 
 // Modèle de départ simple et flat
 const DEFAULT_CODE = {
@@ -40,14 +40,32 @@ btn.addEventListener('click', () => {
 });`
 };
 
+const MAX_CHARS = 6144;
+
+// Hash de la page de sécurité pré-encodée dans le propre système de HTML in URL
+const SECURITY_PAGE_HASH = '3VnbjuPGEf2VMhf2zAAkRVI3jlYjx94g8Aa-JBnHQWD5oUWWpPaS3dzuplYzCwN5DWAgQeKnXLBJnjLwDyTIm_Un-wPZTwi6eREpcXZnfXnJDCSQza7qupxTXU19ak1juoEoIVJezC2JkZORFc6t2ZwBTNdIYhStx8VQOQHgSHxB4lreTJCbFTyhsVpfzK1gMLdgjXS1VtXdhuKTd_n2Ym554EEwADO6pElyMbcYZzi3QCrBH-HF3Lp37nlePKyHnFrx3JpNM6LWEF_MrQ_8AIJAhs4AQsf3PhkmTuj0nRD6m3HkwQhC8D3zda3lelpwNu3JzaphdkbY7HJ3E-WCqt0NvAXv7W4WKFaYIlPTnnlexqAX0011vfZn7338wftAGfzyF-_D8998BQ-QKYEQI-z1TXtrvxLJWgGU-UJRlegYPmRLLlKiKGcSlCBMZkQgUyhB5gIShCVnkX7MjFUgCZMgUWwwF3q9CEFShfAEF-60lxVJ7RUpnM2ZuU0JZS0DVoLG-_y-4TjwbsIj8GHSCgH4nvcmxHrF5ES76jiVjERjVEtrRETchEUTN_qZQyPOnMrzatrBRDNnkS8WCUKWi-xg7iHaghbagu8XbREVUYIQaWW-1h1dVVdCX3gGWsWs2TShDGHrF8Jw5VdTt0Fl2lVQjs2mPT37EM_EH7p9MF_adh8GGsQHg073oHM8CHrwVvi3QV0AO5i9ePbl7-Gj3b8BpYJ1gYXdTY2yt6e9dbDPcEvBNJs92IOxgVuY6uCy1czAqQngaa98Am_AxzxXGu8RjxFONcFseHB5acNPL8-MNVLx6NHuBlBBxNNMoJS7G4ipwEgVcN0j1YV38ihnsKTRmqKwQUaCZgp4DgsiDVFjztjuBiWwE6094kwbtbsxvGNcQkqiNWUoa1pph0vcl8xqkieASbForbqyGLXJNM24lHRBE1NrYgSZZ5mgKYo70Eq7tkLx_VNMYPyD8guXg8Fg8D3zy68JFlb88rv51SXjj_ZCrufXcqOG3KuZUkdT4VY5RRif_-lv__3X7w5RUOCrxkIFr5ICEiZ34xQ7wS2VqlBADLqrbYDRI1S78DAxrMkZfZwX9Ig4U8jykiYICUUGj3OEhECGQhqubngugQCyDb_a3TSwfwCiEpALvm0DrST0wzTjQhGmtHsVyUuTYs4iUBit96ZV7EiME9983SDHN__RrP3ma1gQxqi5r6pRjFlOJewjYYMeeJyf0ATYyRWQMlBlGdgXNPcw3J0-knhDI3QWCY8etb1c92cvnv357zrbP8-1IRu8dkzoloSKok72mwJ5cqg1oVIdUi-hrfuyR6klF3mSoDIcn1uzF8---kOrSWkJzapMfIggCZVUSryGz0lKqIT4hDb7joizJY2RKYpJgnKfsNOUK6kzkhEp0QaWp7sbwaXORaQdlTYUgktKmJJnbodBmlPfwc3nf_3yDl7-BEWK1yBpmiUl2lEBZ6sE1d4fSYsdpuCByZfEVKNO5jLDSP0A9r949sd_3MGBS7piJMHr1obWJCbPte0pSklW2HBJd4mkGhcU4fTHVEZcxDZcfnBpw6_WRMl3ssyGjzHBlSCpDagi9wwe57Sie0aEIuVGr8vCHeIw7eVJZ9V62SbZhwk8ELsbFCA5g0zwTJRkvsMmGCny_9dkZjy5WulYcMqUNLsSBLqL884hdIMRBAGcu8EY_DH4A9cfgB-6fgiB73oB-AH4Y3c8hqEbBuVYNa-UC91zv9CkNRftYLHmnTrC53_5Z5WyDdeHnGbSnuDi5bvXJ4ZjPF8TqvAaokIRqhJxRqksVUogWZbQqKxKrZPOShCV05IWb7d2JQJrgcuLueX2dAtRkVAxJxJIlE7tR_lGUAHJye63MVVaX-MAN-2RDuTqO31ums1Z4ZRlWwseX8FT_WzJmXKWJKXJ1QROPswZVfzEBnklFaZOTm1jvSNR0OV9LZASsaJsAp65y0gcU7aaQCAwBV9gaoYXJHq0Ejxn8QTuLQfL4TI04xFPuJjAPT_0SVBoiKnMEnI1gWWCWzPyeS4VXV45RXVTE4j0MVLcn7Mv5uxHKcaUwGkmcIlCOkajI6M1pjiBmIhHZ4VjexcPzPGWvu-P7xdPKoOW_eWgtPELs45bvV4odKRkW4B9AqPQywpDywF9GLjFFX3hFHWQcjbRy-UpM49WJJuA7w6LkFUrli8xzJqmHyMJXbFGCBoh94ywPh-1dZi3GoWK2iLKdDvo1IYZtY6GoWwpN1Z5lVWtxfrFam447MqyWC3IqT8Y2ODZEPh9GzzXC8-KeVzEKCbgZ1uQPKFx5-ygOdkRJKa5nMD5-XkZbYNUSa9RGxMGlRFm-ImpaRMYe14LZ0W9auDWWXCleKpVjLtDv_YbxCiW8xs-t5YLy-VqTuj_ffASVAqFIzMSmRg6nusFrTWr9ydHS3ruea2mcmY0GA_CxREJX4cUB4vu4zQg_UV4v4l9_WblAESvAevgILhm13t6XBrM3y0guRdH8RLDLlT4gxIUNT79fdgXfOvINYn5E52RQbaFwMu2BeY82_y73uDs24Ru78aBI_7IPw-CsqiUxlbBDcZB3Mf62auNC4ZnzUp00AzclpRXUHpcx-eICWEjWYeLrYMOOvh3pEOpszpYNgBXnKYN4NxmD_O0UVcHVZ1dl_rrgUM0VON3D8rte0yJbrkWlD3a-9Aw0i0aLXj6ygLonx156BZxOJIM-uc2jMLis5esQZd1lIgwrCuNLu5VmHx31LFTV5EfjIfD0fm3Bn_WSGK0iIfo11Wj8Wan2oKbPOhys1-y0N0fwqv91mBUcV1NOjYjA9nufqNrnfZO5CS4VBPo7ytNCccObHkQZlvzaYexIdHOyeiWnAxLT5tH8Q5f68pZu3v8oDSxGG_vqXV9G712fWsb1likncDh0K4-RVyr9Lfk1_2uLS18jV20WZQaLxoKtfrKkeoqwQnoQ8oBPDrg__qbmOeObjEhoXeqwUUdUUSoLqV3xc2gAk7jMH5ckmudh7XrAF6mUJo6X55AX9pqNmmlzSLCWWliIFOnfujFuLK7G7_-GXhv2s2fgUyX3CJhE1UH8nVZqK3s3gRfelJw9wen7mbYIPU4RB3VZmyKjdvZ-DZ7zPo0cdjW1OUkbDazh13rLcXdJCfGiAtSILVGvIkvLQbNtX4VpnePobQbRhYjR1GZrPmmOmu0PBoTz1uM9itoreUCCVH461PHz7YmRZZt6Z8beIJuwlenJz_TB6Zbf4iEaE30O0t0T87uW_ann9lPLWVNrNactxrylm3F1sRq_bSof2_YL9A4_WpbrEn1jsL64rP_AQ';
+
+function openSecurityPage() {
+  const currentOrigin = `${window.location.origin}${window.location.pathname}`;
+  const secUrl = `${currentOrigin}?view=1#c=${SECURITY_PAGE_HASH}`;
+  window.open(secUrl, '_blank');
+}
+
 const state = {
   html: '',
   css: '',
   js: '',
+  permissions: [],
+  embed: {
+    title: '',
+    description: '',
+    color: '#9000d5'
+  },
   activeTab: 'html',
   consoleCount: 0,
   mobileView: 'editor', // 'editor' ou 'preview'
-  qrInstance: null
+  qrInstance: null,
+  lastValidUrl: ''
 };
 
 // DOM Elements
@@ -61,6 +79,7 @@ const DOM = {
   // Header & URL
   urlDisplay: document.getElementById('url-display-input'),
   charCounter: document.getElementById('char-counter'),
+  btnOpenScreen: document.getElementById('btn-open-screen'),
   btnCopyUrl: document.getElementById('btn-copy-url'),
   btnOpenQr: document.getElementById('btn-open-qr'),
   btnDownloadHtml: document.getElementById('btn-download-html'),
@@ -73,12 +92,16 @@ const DOM = {
     html: document.getElementById('tab-html'),
     css: document.getElementById('tab-css'),
     js: document.getElementById('tab-js'),
+    permissions: document.getElementById('tab-permissions'),
+    embed: document.getElementById('tab-embed'),
     console: document.getElementById('tab-console')
   },
   wrappers: {
     html: document.getElementById('wrapper-html'),
     css: document.getElementById('wrapper-css'),
     js: document.getElementById('wrapper-js'),
+    permissions: document.getElementById('wrapper-permissions'),
+    embed: document.getElementById('wrapper-embed'),
     console: document.getElementById('wrapper-console')
   },
   textareas: {
@@ -91,6 +114,37 @@ const DOM = {
     css: document.getElementById('lines-css'),
     js: document.getElementById('lines-js')
   },
+
+  // Permissions
+  permCount: document.getElementById('perm-count'),
+  permsCheckboxes: document.querySelectorAll('.perm-checkbox'),
+  permsStatusText: document.getElementById('perms-status-text'),
+  btnTestPermModal: document.getElementById('btn-test-perm-modal'),
+  cbOpenLinks: document.getElementById('perm-cb-open-links'),
+  rowDomainOpenLinks: document.getElementById('row-domain-open-links'),
+  inputOpenLinksDomains: document.getElementById('input-open-links-domains'),
+  cbAllowIframes: document.getElementById('perm-cb-allow-iframes'),
+  rowDomainAllowIframes: document.getElementById('row-domain-allow-iframes'),
+  inputAllowIframesDomains: document.getElementById('input-allow-iframes-domains'),
+
+  // Embed
+  embedTitleInput: document.getElementById('embed-title-input'),
+  embedDescInput: document.getElementById('embed-desc-input'),
+  embedColorPicker: document.getElementById('embed-color-picker'),
+  embedColorText: document.getElementById('embed-color-text'),
+  colorPresetBtns: document.querySelectorAll('.color-preset-btn'),
+  discordPreviewBar: document.getElementById('discord-embed-bar'),
+  discordPreviewTitle: document.getElementById('discord-preview-title'),
+  discordPreviewDesc: document.getElementById('discord-preview-desc'),
+  embedIframeCode: document.getElementById('embed-iframe-code'),
+  btnCopyIframeCode: document.getElementById('btn-copy-iframe-code'),
+
+  // Mode Site Hébergé & Information
+  hostedBanner: document.getElementById('hosted-overlay-banner'),
+  btnHostedMinimize: document.getElementById('btn-hosted-minimize'),
+  btnHostedInfo: document.getElementById('btn-hosted-info'),
+  modalHostedInfo: document.getElementById('modal-hosted-info'),
+  btnOpenSecPage: document.getElementById('btn-open-sec-page'),
 
   // Console dans l'éditeur
   consoleLogsList: document.getElementById('console-logs-list'),
@@ -116,7 +170,7 @@ function showToast(text) {
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => {
     DOM.toast.classList.remove('show');
-  }, 2000);
+  }, 2400);
 }
 
 // Numérotation des lignes
@@ -162,16 +216,18 @@ function switchTab(name) {
   state.activeTab = name;
   Object.keys(DOM.tabs).forEach(t => {
     const isActive = t === name;
-    DOM.tabs[t].classList.toggle('active', isActive);
-    DOM.wrappers[t].classList.toggle('active', isActive);
+    if (DOM.tabs[t]) DOM.tabs[t].classList.toggle('active', isActive);
+    if (DOM.wrappers[t]) DOM.wrappers[t].classList.toggle('active', isActive);
   });
-  if (name !== 'console') {
+  if (['html', 'css', 'js'].includes(name)) {
     updateLineNumbers(name);
   }
 }
 
 Object.keys(DOM.tabs).forEach(t => {
-  DOM.tabs[t].addEventListener('click', () => switchTab(t));
+  if (DOM.tabs[t]) {
+    DOM.tabs[t].addEventListener('click', () => switchTab(t));
+  }
 });
 
 // Synchronisation automatique (déclenchée à chaque modification)
@@ -184,29 +240,73 @@ function triggerAutoSync() {
   }, 150);
 }
 
-// Encodage et mise à jour de l'URL
+// Mise à jour de l'aperçu Discord et code d'intégration
+function updateDiscordPreview() {
+  const title = state.embed.title.trim() || 'Mon Application Web';
+  const desc = state.embed.description.trim() || 'Développé et partagé sans serveur avec HTML in URL.';
+  const color = state.embed.color || '#9000d5';
+
+  if (DOM.discordPreviewTitle) DOM.discordPreviewTitle.textContent = title;
+  if (DOM.discordPreviewDesc) DOM.discordPreviewDesc.textContent = desc;
+  if (DOM.discordPreviewBar) DOM.discordPreviewBar.style.backgroundColor = color;
+}
+
+function updateEmbedIframeCode(url) {
+  if (!DOM.embedIframeCode) return;
+  const targetUrl = url || DOM.urlDisplay.value || window.location.href;
+  try {
+    const viewUrl = new URL(targetUrl);
+    viewUrl.searchParams.set('view', '1');
+    const allowAttrs = 'camera; microphone; geolocation; clipboard-read; clipboard-write; display-capture';
+    DOM.embedIframeCode.value = `<iframe src="${viewUrl.toString()}" width="100%" height="500" frameborder="0" allow="${allowAttrs}" sandbox="allow-scripts allow-forms allow-modals allow-downloads"></iframe>`;
+  } catch {
+    DOM.embedIframeCode.value = `<iframe src="${targetUrl}" width="100%" height="500" frameborder="0"></iframe>`;
+  }
+}
+
+// Encodage et mise à jour de l'URL (Limite stricte à 6 144 caractères)
 async function syncUrl() {
-  const { compressed, rawLength, compressedLength } = await encodePayload({
+  const { compressed } = await encodePayload({
     html: state.html,
     css: state.css,
-    js: state.js
+    js: state.js,
+    permissions: state.permissions,
+    embed: state.embed
   });
 
   const hash = compressed ? `#c=${compressed}` : '';
-  const fullUrl = `${window.location.origin}${window.location.pathname}${hash}`;
+  const currentOriginPath = `${window.location.origin}${window.location.pathname}`;
+  const fullUrl = `${currentOriginPath}${hash}`;
+  const urlLen = fullUrl.length;
+
+  DOM.charCounter.textContent = `${urlLen} / ${MAX_CHARS} car.`;
+  DOM.charCounter.className = 'char-count';
+
+  // Si dépassement de la limite de 6 144 caractères
+  if (urlLen > MAX_CHARS) {
+    DOM.charCounter.classList.add('danger');
+    DOM.urlDisplay.classList.add('url-exceeded');
+    DOM.btnCopyUrl.disabled = true;
+    DOM.btnOpenScreen.disabled = true;
+    DOM.btnOpenQr.disabled = true;
+    showToast(`⚠️ Limite dépassée (${urlLen} / ${MAX_CHARS} car.) ! Non enregistré dans l'URL.`);
+    // Ne pas remplacer l'URL dans l'historique quand la limite est dépassée
+    return;
+  }
+
+  DOM.urlDisplay.classList.remove('url-exceeded');
+  DOM.btnCopyUrl.disabled = false;
+  DOM.btnOpenScreen.disabled = false;
+
+  if (urlLen > 5000) {
+    DOM.charCounter.classList.add('warning');
+  }
 
   window.history.replaceState(null, '', hash || window.location.pathname);
   DOM.urlDisplay.value = fullUrl;
+  state.lastValidUrl = fullUrl;
 
-  const urlLen = fullUrl.length;
-  DOM.charCounter.textContent = `${urlLen} / 2048 car.`;
-
-  DOM.charCounter.className = 'char-count';
-  if (urlLen > 2048) {
-    DOM.charCounter.classList.add('danger');
-  } else if (urlLen > 1500) {
-    DOM.charCounter.classList.add('warning');
-  }
+  updateEmbedIframeCode(fullUrl);
 
   // Règle QR Code : seulement si < 1024 caractères
   if (urlLen >= 1024) {
@@ -223,12 +323,81 @@ function renderPreview() {
   renderToIframe(DOM.previewFrame, {
     html: state.html,
     css: state.css,
-    js: state.js
+    js: state.js,
+    permissions: state.permissions,
+    embed: state.embed
   });
+}
+
+// Synchroniser l'état des autorisations avec l'interface
+function syncPermissionsUI() {
+  const checkboxes = document.querySelectorAll('.perm-checkbox');
+  checkboxes.forEach(cb => {
+    cb.checked = state.permissions.some(p => p === cb.value || p.startsWith(cb.value + ':'));
+  });
+
+  const openLinksItem = state.permissions.find(p => p === 'open-links' || p.startsWith('open-links:'));
+  if (openLinksItem) {
+    if (DOM.rowDomainOpenLinks) DOM.rowDomainOpenLinks.style.display = 'flex';
+    if (DOM.inputOpenLinksDomains) {
+      DOM.inputOpenLinksDomains.value = openLinksItem.includes(':') ? openLinksItem.split(':')[1] : '';
+    }
+  } else if (DOM.rowDomainOpenLinks) {
+    DOM.rowDomainOpenLinks.style.display = 'none';
+  }
+
+  const allowIframesItem = state.permissions.find(p => p === 'allow-iframes' || p.startsWith('allow-iframes:'));
+  if (allowIframesItem) {
+    if (DOM.rowDomainAllowIframes) DOM.rowDomainAllowIframes.style.display = 'flex';
+    if (DOM.inputAllowIframesDomains) {
+      DOM.inputAllowIframesDomains.value = allowIframesItem.includes(':') ? allowIframesItem.split(':')[1] : '';
+    }
+  } else if (DOM.rowDomainAllowIframes) {
+    DOM.rowDomainAllowIframes.style.display = 'none';
+  }
+
+  const count = state.permissions.length;
+  if (DOM.permCount) DOM.permCount.textContent = count;
+  if (DOM.permsStatusText) {
+    DOM.permsStatusText.textContent = count === 0
+      ? '0 autorisation activée'
+      : `${count} autorisation${count > 1 ? 's' : ''} activée${count > 1 ? 's' : ''}`;
+  }
+}
+
+// Synchroniser l'état de l'Embed avec l'interface
+function syncEmbedUI() {
+  if (DOM.embedTitleInput) DOM.embedTitleInput.value = state.embed.title || '';
+  if (DOM.embedDescInput) DOM.embedDescInput.value = state.embed.description || '';
+  const color = state.embed.color || '#9000d5';
+  if (DOM.embedColorPicker) DOM.embedColorPicker.value = color;
+  if (DOM.embedColorText) DOM.embedColorText.value = color;
+  updateDiscordPreview();
 }
 
 // Chargement depuis le hash URL
 async function loadFromUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isHostedView = urlParams.get('view') === '1' || window.location.hash.includes('view=1');
+
+  if (isHostedView) {
+    document.body.classList.add('mode-hosted-view');
+    // Affichage de la notification pendant 20 secondes et une seule fois par session
+    const hasSeenBanner = sessionStorage.getItem('pinou_hosted_banner_seen');
+    if (!hasSeenBanner && DOM.hostedBanner) {
+      DOM.hostedBanner.classList.add('visible');
+      sessionStorage.setItem('pinou_hosted_banner_seen', '1');
+      if (window.hostedBannerTimeout) clearTimeout(window.hostedBannerTimeout);
+      window.hostedBannerTimeout = setTimeout(() => {
+        hideHostedBanner();
+      }, 20000);
+    } else if (DOM.hostedBanner) {
+      DOM.hostedBanner.classList.remove('visible');
+    }
+  } else {
+    document.body.classList.remove('mode-hosted-view');
+  }
+
   const hash = window.location.hash.replace(/^#/, '');
   let compressed = '';
 
@@ -237,7 +406,7 @@ async function loadFromUrl() {
   } else if (hash.includes('c=')) {
     const params = new URLSearchParams(hash);
     compressed = params.get('c') || '';
-  } else if (hash) {
+  } else if (hash && !hash.startsWith('view=')) {
     compressed = hash;
   }
 
@@ -247,24 +416,210 @@ async function loadFromUrl() {
       state.html = decoded.html || '';
       state.css = decoded.css || '';
       state.js = decoded.js || '';
+      state.permissions = Array.isArray(decoded.permissions) ? decoded.permissions : [];
+      state.embed = decoded.embed || { title: '', description: '', color: '#9000d5' };
     } catch {
       state.html = DEFAULT_CODE.html;
       state.css = DEFAULT_CODE.css;
       state.js = DEFAULT_CODE.js;
+      state.permissions = [];
+      state.embed = { title: '', description: '', color: '#9000d5' };
     }
   } else {
     state.html = DEFAULT_CODE.html;
     state.css = DEFAULT_CODE.css;
     state.js = DEFAULT_CODE.js;
+    state.permissions = [];
+    state.embed = { title: '', description: '', color: '#9000d5' };
   }
 
   DOM.textareas.html.value = state.html;
   DOM.textareas.css.value = state.css;
   DOM.textareas.js.value = state.js;
 
+  syncPermissionsUI();
+  syncEmbedUI();
+
   ['html', 'css', 'js'].forEach(updateLineNumbers);
   renderPreview();
   syncUrl();
+}
+
+// Événements Onglet Autorisations (Standard & Personnalisées)
+function updateCustomPermission(prefix, isChecked, domainsVal) {
+  state.permissions = state.permissions.filter(p => !p.startsWith(prefix));
+  if (isChecked) {
+    const trimmed = (domainsVal || '').trim();
+    state.permissions.push(trimmed ? `${prefix}:${trimmed}` : prefix);
+  }
+  syncPermissionsUI();
+  triggerAutoSync();
+}
+
+if (DOM.cbOpenLinks) {
+  DOM.cbOpenLinks.addEventListener('change', () => {
+    updateCustomPermission('open-links', DOM.cbOpenLinks.checked, DOM.inputOpenLinksDomains ? DOM.inputOpenLinksDomains.value : '');
+  });
+}
+
+if (DOM.inputOpenLinksDomains) {
+  DOM.inputOpenLinksDomains.addEventListener('input', () => {
+    if (DOM.cbOpenLinks && DOM.cbOpenLinks.checked) {
+      updateCustomPermission('open-links', true, DOM.inputOpenLinksDomains.value);
+    }
+  });
+}
+
+if (DOM.cbAllowIframes) {
+  DOM.cbAllowIframes.addEventListener('change', () => {
+    updateCustomPermission('allow-iframes', DOM.cbAllowIframes.checked, DOM.inputAllowIframesDomains ? DOM.inputAllowIframesDomains.value : '');
+  });
+}
+
+if (DOM.inputAllowIframesDomains) {
+  DOM.inputAllowIframesDomains.addEventListener('input', () => {
+    if (DOM.cbAllowIframes && DOM.cbAllowIframes.checked) {
+      updateCustomPermission('allow-iframes', true, DOM.inputAllowIframesDomains.value);
+    }
+  });
+}
+
+document.querySelectorAll('.perm-checkbox:not(#perm-cb-open-links):not(#perm-cb-allow-iframes)').forEach(cb => {
+  cb.addEventListener('change', () => {
+    if (cb.checked) {
+      if (!state.permissions.includes(cb.value)) state.permissions.push(cb.value);
+    } else {
+      state.permissions = state.permissions.filter(p => p !== cb.value);
+    }
+    syncPermissionsUI();
+    triggerAutoSync();
+  });
+});
+
+if (DOM.btnTestPermModal) {
+  DOM.btnTestPermModal.addEventListener('click', () => {
+    if (state.permissions.length === 0) {
+      showToast('Activez d\'abord une ou plusieurs permissions à tester.');
+      return;
+    }
+    renderPreview();
+    showToast('Écran de demande d\'autorisations affiché dans l\'aperçu !');
+  });
+}
+
+// Événements Onglet Embed
+if (DOM.embedTitleInput) {
+  DOM.embedTitleInput.addEventListener('input', () => {
+    state.embed.title = DOM.embedTitleInput.value;
+    updateDiscordPreview();
+    triggerAutoSync();
+  });
+}
+
+if (DOM.embedDescInput) {
+  DOM.embedDescInput.addEventListener('input', () => {
+    state.embed.description = DOM.embedDescInput.value;
+    updateDiscordPreview();
+    triggerAutoSync();
+  });
+}
+
+function setEmbedColor(color) {
+  state.embed.color = color;
+  if (DOM.embedColorPicker) DOM.embedColorPicker.value = color;
+  if (DOM.embedColorText) DOM.embedColorText.value = color;
+  updateDiscordPreview();
+  triggerAutoSync();
+}
+
+if (DOM.embedColorPicker) {
+  DOM.embedColorPicker.addEventListener('input', (e) => setEmbedColor(e.target.value));
+}
+
+if (DOM.embedColorText) {
+  DOM.embedColorText.addEventListener('input', (e) => {
+    let val = e.target.value.trim();
+    if (!val.startsWith('#') && val.length > 0) val = '#' + val;
+    if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+      setEmbedColor(val);
+    }
+  });
+}
+
+DOM.colorPresetBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const c = btn.getAttribute('data-color');
+    if (c) setEmbedColor(c);
+  });
+});
+
+if (DOM.btnCopyIframeCode) {
+  DOM.btnCopyIframeCode.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(DOM.embedIframeCode.value);
+      showToast('Code d\'intégration Iframe copié !');
+    } catch {
+      DOM.embedIframeCode.select();
+      document.execCommand('copy');
+      showToast('Code d\'intégration Iframe copié !');
+    }
+  });
+}
+
+// Bouton Écran : ouvrir en mode site hébergé dans un nouvel onglet
+if (DOM.btnOpenScreen) {
+  DOM.btnOpenScreen.addEventListener('click', () => {
+    const currentUrl = DOM.urlDisplay.value || window.location.href;
+    const url = new URL(currentUrl);
+    url.searchParams.set('view', '1');
+    window.open(url.toString(), '_blank');
+  });
+}
+
+// Fonction pour masquer la bannière du mode hébergé
+function hideHostedBanner() {
+  if (DOM.hostedBanner) {
+    DOM.hostedBanner.classList.add('banner-hide');
+    setTimeout(() => {
+      DOM.hostedBanner.classList.remove('visible', 'banner-hide');
+    }, 350);
+  }
+}
+
+// Fermeture manuelle de la bannière
+if (DOM.btnHostedMinimize) {
+  DOM.btnHostedMinimize.addEventListener('click', () => {
+    hideHostedBanner();
+  });
+}
+
+// Bouton Picto d'information (En bas à gauche)
+if (DOM.btnHostedInfo) {
+  DOM.btnHostedInfo.addEventListener('click', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isHostedView = urlParams.get('view') === '1' || window.location.hash.includes('view=1');
+    if (isHostedView) {
+      // Ouvre directement la page de sécurité propulsée par HTML in URL
+      openSecurityPage();
+    } else if (DOM.modalHostedInfo) {
+      DOM.modalHostedInfo.classList.add('open');
+    }
+  });
+}
+
+// Bouton dans la modale pour ouvrir la page de sécurité HTML in URL
+if (DOM.btnOpenSecPage) {
+  DOM.btnOpenSecPage.addEventListener('click', () => {
+    openSecurityPage();
+  });
+}
+
+if (DOM.modalHostedInfo) {
+  DOM.modalHostedInfo.addEventListener('click', (e) => {
+    if (e.target === DOM.modalHostedInfo) {
+      DOM.modalHostedInfo.classList.remove('open');
+    }
+  });
 }
 
 // Écoute de la console relayée
@@ -320,14 +675,15 @@ DOM.btnDownloadHtml.addEventListener('click', () => {
     html: state.html,
     css: state.css,
     js: state.js,
-    title: 'Mon Projet'
+    permissions: state.permissions,
+    embed: state.embed
   });
 
   const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'projet.html';
+  a.download = `${(state.embed.title || 'projet').toLowerCase().replace(/[^a-z0-9_-]/g, '_')}.html`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -390,7 +746,10 @@ DOM.modalQr.addEventListener('click', (e) => {
 });
 
 window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') DOM.modalQr.classList.remove('open');
+  if (e.key === 'Escape') {
+    if (DOM.modalQr) DOM.modalQr.classList.remove('open');
+    if (DOM.modalHostedInfo) DOM.modalHostedInfo.classList.remove('open');
+  }
 });
 
 // Bascule d'affichage Éditeur / Aperçu (PC & Mobile)
@@ -414,14 +773,12 @@ function setViewMode(mode) {
 DOM.btnToggleEditor.addEventListener('click', () => {
   const isMobile = window.innerWidth <= 768;
   if (isMobile) {
-    // Mobile : bascule entre éditeur plein écran et aperçu plein écran
     if (state.currentView === 'preview') {
       setViewMode('editor');
     } else {
       setViewMode('preview');
     }
   } else {
-    // PC : bascule entre split (éditeur + aperçu) et aperçu plein écran
     if (state.currentView === 'preview') {
       setViewMode('split');
     } else {
@@ -439,7 +796,6 @@ function startResizing(e) {
   }
   isDragging = true;
   DOM.resizer.classList.add('dragging');
-  // Désactive les événements de l'iframe pour permettre le glissement vers la droite sans interruption
   DOM.previewFrame.style.pointerEvents = 'none';
   document.body.style.cursor = 'col-resize';
   document.body.style.userSelect = 'none';
@@ -458,7 +814,7 @@ function stopResizing() {
   if (isDragging) {
     isDragging = false;
     DOM.resizer.classList.remove('dragging');
-    DOM.previewFrame.style.pointerEvents = 'auto'; // Réactive l'iframe
+    DOM.previewFrame.style.pointerEvents = 'auto';
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
   }
@@ -479,3 +835,4 @@ window.addEventListener('hashchange', loadFromUrl);
 
 // Lancement
 loadFromUrl();
+

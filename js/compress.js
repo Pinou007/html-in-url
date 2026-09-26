@@ -75,11 +75,26 @@ export async function decompressString(compressedBase64Url) {
 }
 
 /**
- * Encode le payload complet { html, css, js } en chaîne compressée
+ * Encode le payload complet { html, css, js, permissions, embed } en chaîne compressée
  */
-export async function encodePayload({ html = '', css = '', js = '' }) {
-  // Structure compacte en tableau JSON [html, css, js]
-  const rawJson = JSON.stringify([html, css, js]);
+export async function encodePayload({ html = '', css = '', js = '', permissions = [], embed = {} }) {
+  // Structure compacte : [html, css, js, permissions, { t, d, c }]
+  const payloadArray = [html, css, js];
+  const hasPerms = Array.isArray(permissions) && permissions.length > 0;
+  const hasEmbed = embed && (embed.title || embed.description || (embed.color && embed.color !== '#9000d5'));
+
+  if (hasPerms || hasEmbed) {
+    payloadArray.push(permissions || []);
+  }
+  if (hasEmbed) {
+    payloadArray.push({
+      t: embed.title || '',
+      d: embed.description || '',
+      c: embed.color || '#9000d5'
+    });
+  }
+
+  const rawJson = JSON.stringify(payloadArray);
   const compressed = await compressString(rawJson);
   return {
     compressed,
@@ -93,32 +108,61 @@ export async function encodePayload({ html = '', css = '', js = '' }) {
  */
 export async function decodePayload(compressedString) {
   if (!compressedString) {
-    return { html: '', css: '', js: '' };
+    return {
+      html: '',
+      css: '',
+      js: '',
+      permissions: [],
+      embed: { title: '', description: '', color: '#9000d5' }
+    };
   }
   try {
     const rawJson = await decompressString(compressedString);
     const parsed = JSON.parse(rawJson);
     if (Array.isArray(parsed)) {
+      const permissions = Array.isArray(parsed[3]) ? parsed[3] : [];
+      let embed = { title: '', description: '', color: '#9000d5' };
+      if (parsed[4] && typeof parsed[4] === 'object') {
+        embed = {
+          title: parsed[4].t || parsed[4].title || '',
+          description: parsed[4].d || parsed[4].description || '',
+          color: parsed[4].c || parsed[4].color || '#9000d5'
+        };
+      }
       return {
         html: parsed[0] || '',
         css: parsed[1] || '',
-        js: parsed[2] || ''
+        js: parsed[2] || '',
+        permissions,
+        embed
       };
     }
-    return { html: '', css: '', js: '' };
+    return {
+      html: '',
+      css: '',
+      js: '',
+      permissions: [],
+      embed: { title: '', description: '', color: '#9000d5' }
+    };
   } catch (err) {
     console.warn('Impossible de décoder le payload compressé:', err);
-    return { html: '', css: '', js: '' };
+    return {
+      html: '',
+      css: '',
+      js: '',
+      permissions: [],
+      embed: { title: '', description: '', color: '#9000d5' }
+    };
   }
 }
 
 /**
- * Calcule les statistiques de taille et de limite d'URL
+ * Calcule les statistiques de taille et de limite d'URL (Max 6 144 caractères)
  */
 export function calculateUrlStats(urlLength, rawBytes = 0, compressedBytes = 0) {
-  const SAFE_LIMIT = 2048;
-  const MAX_LIMIT = 4096;
-  const percentage = Math.min(100, Math.round((urlLength / SAFE_LIMIT) * 100));
+  const SAFE_LIMIT = 5000;
+  const MAX_LIMIT = 6144;
+  const percentage = Math.min(100, Math.round((urlLength / MAX_LIMIT) * 100));
   
   let status = 'safe'; // 'safe', 'warning', 'danger'
   if (urlLength > MAX_LIMIT) {

@@ -32,14 +32,23 @@
         </button>
       </div>
 
-      <!-- BARRE URL ÉPURÉE SANS FOND ÉPAIS AVEC LES 3 BOUTONS PICTOS -->
+      <!-- BARRE URL ÉPURÉE SANS FOND ÉPAIS AVEC LES 4 BOUTONS PICTOS -->
       <div class="url-bar-container">
         <div class="url-input-wrap">
           <input type="text" readonly class="url-text" id="url-display-input" value="Chargement de l'URL...">
-          <span class="char-count" id="char-counter">0 / 2048 car.</span>
+          <span class="char-count" id="char-counter">0 / 6144 car.</span>
         </div>
 
         <div class="url-actions">
+          <!-- Picto Ouvrir en plein écran (Mode Site Hébergé) -->
+          <button class="btn-picto" id="btn-open-screen" title="Ouvrir le site hébergé en plein écran (nouvel onglet)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </button>
+
           <!-- Picto Copier -->
           <button class="btn-picto" id="btn-copy-url" title="Copier l'URL">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,15 +79,52 @@
       </div>
     </header>
 
+    <!-- BANNIÈRE OVERLAY SITE HÉBERGÉ (MODE PLEIN ÉCRAN / ?view=1) -->
+    <aside class="hosted-overlay-banner" id="hosted-overlay-banner" aria-label="Avertissement de sécurité">
+      <div class="hosted-banner-content">
+        <div class="hosted-banner-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div class="hosted-banner-text">
+          <strong>Site hébergé via html.pinou007.fr</strong>
+          <span class="hosted-banner-desc">— Attention : Contenu créé par un tiers. Ne partagez jamais d'informations sensibles (mots de passe, numéros bancaires).</span>
+        </div>
+      </div>
+      <div class="hosted-banner-actions">
+        <button class="hosted-btn-close" id="btn-hosted-minimize" title="Fermer l'avertissement">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Bouton Picto d'information en bas à gauche en mode hébergé -->
+    <button class="hosted-info-btn" id="btn-hosted-info" title="Informations d'hébergement & Signalement">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+    </button>
+
     <!-- ESPACE DE TRAVAIL : ÉDITEUR (À GAUCHE/HAUT) & IFRAME (À DROITE/BAS) -->
     <main class="workspace" id="workspace">
-      <!-- ZONE ÉDITEUR DE CODE AVEC ONGLETS (HTML, CSS, JS, CONSOLE) -->
+      <!-- ZONE ÉDITEUR DE CODE AVEC ONGLETS (HTML, CSS, JS, AUTORISATIONS, EMBED, CONSOLE) -->
       <section class="editor-pane" id="editor-pane">
         <div class="editor-header">
           <div class="editor-tabs">
             <button class="tab-btn active" data-tab="html" id="tab-html">HTML</button>
             <button class="tab-btn" data-tab="css" id="tab-css">CSS</button>
             <button class="tab-btn" data-tab="js" id="tab-js">JS</button>
+            <button class="tab-btn" data-tab="permissions" id="tab-permissions">
+              <span>Autorisations</span>
+              <span class="perm-tab-badge" id="perm-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="embed" id="tab-embed">Embed</button>
             <button class="tab-btn" data-tab="console" id="tab-console">
               <span>Console</span>
               <span class="console-tab-badge" id="console-count">0</span>
@@ -105,6 +151,392 @@
             <textarea class="code-textarea" id="textarea-js" spellcheck="false" placeholder="// Code JavaScript"></textarea>
           </div>
 
+          <!-- Onglet Autorisations (avec Pictos SVG & Toggles) -->
+          <div class="code-wrapper panel-wrapper" id="wrapper-permissions">
+            <div class="panel-inner">
+              <div class="panel-section-head">
+                <h4 class="panel-title">Autorisations du Site</h4>
+                <p class="panel-desc">Activez les fonctionnalités que votre site demandera à l'utilisateur lors de son ouverture.</p>
+              </div>
+
+              <div class="perms-toggle-list">
+                <!-- 1. Caméra -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Caméra (Webcam)</span>
+                      <span class="perm-desc">Flux vidéo de la caméra</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="camera" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 2. Microphone -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Microphone</span>
+                      <span class="perm-desc">Enregistrement et son audio</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="microphone" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 3. Géolocalisation -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Géolocalisation</span>
+                      <span class="perm-desc">Coordonnées GPS de l'appareil</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="geolocation" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 4. Notifications -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Notifications</span>
+                      <span class="perm-desc">Alertes et push notifications</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="notifications" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 5. Presse-papiers (Lecture) -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="9" y1="16" x2="13" y2="16"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Lecture Presse-papiers</span>
+                      <span class="perm-desc">Lire le texte copié</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="clipboard-read" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 6. Presse-papiers (Écriture) -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Écriture Presse-papiers</span>
+                      <span class="perm-desc">Copier du contenu automatiquement</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="clipboard-write" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 7. Partage d'écran -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Partage d'écran</span>
+                      <span class="perm-desc">Capture de fenêtre ou de bureau</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="display-capture" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 8. Maintien Écran Allumé -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Maintien Écran (Wake Lock)</span>
+                      <span class="perm-desc">Empêcher la mise en veille</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="screen-wake-lock" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 9. Capteurs & Mouvements -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Capteurs & Mouvements</span>
+                      <span class="perm-desc">Gyroscope et orientation</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="deviceorientation" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 10. Bluetooth -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"></polyline>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Bluetooth</span>
+                      <span class="perm-desc">Connexion aux appareils sans fil</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="bluetooth" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 11. MIDI -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Instruments MIDI</span>
+                      <span class="perm-desc">Claviers et contrôleurs MIDI</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="midi" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 12. Plein écran -->
+                <div class="perm-toggle-row">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Mode Plein Écran</span>
+                      <span class="perm-desc">Basculer en plein écran</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="fullscreen" class="perm-checkbox">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- 13. Liens Externes & Nouvelles Pages -->
+                <div class="perm-toggle-row has-subinput">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Liens & Nouvelles Pages</span>
+                      <span class="perm-desc">Ouvrir des onglets ou fenêtres externes</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="open-links" class="perm-checkbox" id="perm-cb-open-links">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="perm-domain-input-row" id="row-domain-open-links" style="display: none;">
+                  <label class="perm-domain-label" for="input-open-links-domains">Domaines autorisés obligatoires (ex: github.com, discord.com) :</label>
+                  <input type="text" id="input-open-links-domains" class="form-input form-input-sm" placeholder="ex: github.com, discord.com (obligatoire)">
+                </div>
+
+                <!-- 14. Iframes & Embeds Externes -->
+                <div class="perm-toggle-row has-subinput">
+                  <div class="perm-item-left">
+                    <div class="perm-svg-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <polyline points="8 21 12 17 16 21"></polyline>
+                      </svg>
+                    </div>
+                    <div class="perm-text-box">
+                      <span class="perm-name">Iframes & Embeds Externes</span>
+                      <span class="perm-desc">Intégrer des sites et vidéos par domaine</span>
+                    </div>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" value="allow-iframes" class="perm-checkbox" id="perm-cb-allow-iframes">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="perm-domain-input-row" id="row-domain-allow-iframes" style="display: none;">
+                  <label class="perm-domain-label" for="input-allow-iframes-domains">Domaines iframes obligatoires (ex: youtube.com, vimeo.com) :</label>
+                  <input type="text" id="input-allow-iframes-domains" class="form-input form-input-sm" placeholder="ex: youtube.com, vimeo.com (obligatoire)">
+                </div>
+              </div>
+
+              <div class="perms-footer-bar">
+                <span class="perms-status" id="perms-status-text">0 autorisation activée</span>
+                <button type="button" class="btn-flat-sm" id="btn-test-perm-modal">Tester l'écran de demande</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Onglet Embed (Discord Rich Embed) -->
+          <div class="code-wrapper panel-wrapper" id="wrapper-embed">
+            <div class="panel-inner">
+              <div class="panel-section-head">
+                <h4 class="panel-title">Configuration de l'Embed Discord</h4>
+                <p class="panel-desc">Personnalisez le titre, la description et la couleur du bandeau lors du partage sur Discord et les réseaux.</p>
+              </div>
+
+              <div class="embed-form-grid">
+                <div class="embed-form-col">
+                  <div class="form-group">
+                    <label for="embed-title-input" class="form-label">Titre de l'Embed</label>
+                    <input type="text" id="embed-title-input" class="form-input" placeholder="Ex: Mon Application Web" maxlength="80">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="embed-desc-input" class="form-label">Sous-titre / Description</label>
+                    <textarea id="embed-desc-input" class="form-textarea" placeholder="Ex: Développé et partagé sans serveur avec HTML in URL." rows="3" maxlength="240"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Couleur de l'Embed</label>
+                    <div class="color-picker-row">
+                      <input type="color" id="embed-color-picker" value="#9000d5" class="color-swatch-input">
+                      <input type="text" id="embed-color-text" value="#9000d5" class="form-input color-text-input" maxlength="7">
+                      <div class="color-presets">
+                        <button type="button" class="color-preset-btn" data-color="#9000d5" style="background:#9000d5;" title="Violet Antigravity"></button>
+                        <button type="button" class="color-preset-btn" data-color="#3b82f6" style="background:#3b82f6;" title="Bleu"></button>
+                        <button type="button" class="color-preset-btn" data-color="#10b981" style="background:#10b981;" title="Vert"></button>
+                        <button type="button" class="color-preset-btn" data-color="#f59e0b" style="background:#f59e0b;" title="Orange"></button>
+                        <button type="button" class="color-preset-btn" data-color="#ef4444" style="background:#ef4444;" title="Rouge"></button>
+                        <button type="button" class="color-preset-btn" data-color="#06b6d4" style="background:#06b6d4;" title="Cyan"></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="embed-preview-col">
+                  <span class="preview-subheading">Aperçu en direct (Discord)</span>
+                  <div class="discord-embed-card" id="discord-embed-card">
+                    <div class="discord-embed-bar" id="discord-embed-bar" style="background-color: #9000d5;"></div>
+                    <div class="discord-embed-content">
+                      <div class="discord-embed-provider">HTML IN URL</div>
+                      <div class="discord-embed-title" id="discord-preview-title">Mon Application Web</div>
+                      <div class="discord-embed-desc" id="discord-preview-desc">Développé et partagé sans serveur avec HTML in URL.</div>
+                      <div class="discord-embed-footer">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>Site hébergé via html.pinou007.fr — Faire attention : Ne partagez jamais d'informations sensibles.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label">Code d'intégration Iframe</label>
+                    <div class="embed-code-row">
+                      <input type="text" readonly id="embed-iframe-code" class="form-input embed-code-input" value="">
+                      <button type="button" class="btn-flat primary" id="btn-copy-iframe-code">Copier</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Onglet Console (Intégré côté éditeur) -->
           <div class="code-wrapper console-wrapper" id="wrapper-console">
             <div class="console-toolbar">
@@ -127,11 +559,115 @@
           <span class="preview-label">Aperçu</span>
         </div>
         <div class="iframe-container">
-          <!-- Sandbox stricte sans allow-same-origin ni allow-top-navigation -->
-          <iframe id="preview-frame" sandbox="allow-scripts" title="Aperçu"></iframe>
+          <!-- Sandbox stricte sans allow-same-origin avec autorisations média & modales -->
+          <iframe id="preview-frame" sandbox="allow-scripts allow-forms allow-modals allow-downloads" allow="camera; microphone; geolocation; clipboard-read; clipboard-write; display-capture; screen-wake-lock; midi" title="Aperçu"></iframe>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODALE INFO & SIGNALEMENT (Accessible via le picto en bas à gauche) -->
+  <div class="modal-overlay" id="modal-hosted-info" role="dialog" aria-modal="true">
+    <div class="modal-card modal-hosted-card">
+      <div class="modal-header">
+        <div class="modal-title-with-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9000d5" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <h3 class="modal-title">Hébergement & Sécurité</h3>
+        </div>
+        <button class="btn-picto" id="btn-close-hosted-info" data-close="modal-hosted-info" title="Fermer (Échap)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content hosted-info-content">
+        <div class="info-block">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9000d5" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Où est hébergé ce site ?
+          </h4>
+          <p>Ce site web fonctionne <strong>100% sans serveur</strong> ! Tout le code (HTML, CSS, JS) est stocké et compressé directement dans l'URL. Aucun fichier n'est conservé sur nos machines.</p>
+        </div>
+
+        <div class="info-block">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9000d5" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Créer votre propre site web
+          </h4>
+          <p>Vous souhaitez coder ou modifier ce site ? Ouvrez l'éditeur gratuitement sur html.pinou007.fr.</p>
+          <div class="info-actions">
+            <a href="./" class="btn-flat primary hosted-edit-link" id="link-create-site">
+              Ouvrir l'Éditeur HTML in URL
+            </a>
+          </div>
+        </div>
+
+        <div class="info-block report-section">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            Signaler ce site / Contenu suspect
+          </h4>
+          <div class="report-explanation" id="report-explanation">
+            <div class="report-alert-box">
+              <strong class="report-alert-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Aucune donnée n'est stockée sur nos serveurs :
+              </strong>
+              <p>Ce site n'existe sur <strong>aucun serveur ni base de données</strong>. Il est uniquement contenu dans le lien que la personne vous a envoyé.</p>
+              <p class="report-alert-highlight">Il est donc techniquement impossible de « supprimer » ou « bannir » ce site depuis un serveur, puisqu'il n'y a aucun fichier hébergé.</p>
+              <div class="report-steps">
+                <strong>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9000d5" stroke-width="2" style="vertical-align: middle; margin-right: 4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  Que devez-vous faire ?
+                </strong>
+                <ul class="report-steps-list">
+                  <li>
+                    <span class="step-picto">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </span>
+                    <span><strong>Ne saisissez jamais d'informations confidentielles</strong> (mots de passe, numéros de carte bancaire).</span>
+                  </li>
+                  <li>
+                    <span class="step-picto">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    </span>
+                    <span><strong>Fermez simplement cet onglet.</strong></span>
+                  </li>
+                  <li>
+                    <span class="step-picto">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </span>
+                    <span><strong>Signalez directement</strong> la personne ou le message sur la messagerie (Discord, SMS, WhatsApp, Telegram, etc.) qui vous a partagé ce lien.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-block sec-open-block">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9000d5" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Page de sécurité complète
+          </h4>
+          <p>Consultez la version complète générée directement par le système HTML in URL :</p>
+          <div class="info-actions">
+            <button type="button" class="btn-flat primary" id="btn-open-sec-page">
+              Ouvrir la Page de Sécurité HTML in URL
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MODALE QR CODE (ACTIF QUAND < 1024 CARACTÈRES) -->
