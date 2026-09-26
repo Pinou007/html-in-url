@@ -27,12 +27,6 @@ export const PERMISSION_ITEMS = {
     desc: 'Accès à la position GPS de l\'appareil',
     svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
   },
-  notifications: {
-    id: 'notifications',
-    label: 'Notifications',
-    desc: 'Affichage de notifications système',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`
-  },
   'clipboard-read': {
     id: 'clipboard-read',
     label: 'Lecture Presse-papiers',
@@ -44,30 +38,6 @@ export const PERMISSION_ITEMS = {
     label: 'Écriture Presse-papiers',
     desc: 'Copier automatiquement du texte',
     svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`
-  },
-  'display-capture': {
-    id: 'display-capture',
-    label: 'Partage d\'écran',
-    desc: 'Capture de l\'écran ou d\'une fenêtre',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`
-  },
-  'screen-wake-lock': {
-    id: 'screen-wake-lock',
-    label: 'Maintien Écran Allumé',
-    desc: 'Empêcher la mise en veille automatique',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line></svg>`
-  },
-  deviceorientation: {
-    id: 'deviceorientation',
-    label: 'Capteurs & Mouvements',
-    desc: 'Orientation, boussole et accéléromètre',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`
-  },
-  fullscreen: {
-    id: 'fullscreen',
-    label: 'Mode Plein Écran',
-    desc: 'Basculer la page en plein écran',
-    svg: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`
   },
   'open-links': {
     id: 'open-links',
@@ -97,6 +67,9 @@ export function sanitizeIframes(html, { hasIframePerm = false, allowedIframeDoma
       .replace(/<embed[\s\S]*?<\/embed>/gi, blockedHtml)
       .replace(/<embed[^>]*\/?>/gi, blockedHtml);
   }
+
+  // Si hasIframePerm est actif sans filtre de domaine = tout autoriser
+  if (hasIframePerm && allowedIframeDomains.length === 0) return html;
 
   // Si hasIframePerm est actif avec filtrage de domaine
   if (allowedIframeDomains.length > 0) {
@@ -148,8 +121,8 @@ export function buildSandboxDocument({
         const ALLOWED_IFRAME_DOMAINS = ${JSON.stringify(allowedIframeDomains)};
 
         function isDomainAllowed(urlStr, allowedList) {
-          // Les domaines sont strictement obligatoires : si la liste est vide, aucun accès n'est accordé
-          if (!allowedList || allowedList.length === 0) return false;
+          // Liste vide = tout autoriser
+          if (!allowedList || allowedList.length === 0) return true;
           try {
             const u = new URL(urlStr, window.location.href);
             const h = u.hostname.toLowerCase();
